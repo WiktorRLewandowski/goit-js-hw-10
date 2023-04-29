@@ -30,15 +30,21 @@ searchEl.addEventListener('input', debounce((event) => {
             return;
         }
         console.log(data, data.length, data[0].name, data[0].flags.svg)
-        return countryList(data) 
+        
+        listEl.innerHTML = countryArray;
+        console.log(countryArray)
     })
     .catch((error) => console.log(error))
     }, DEBOUNCE_DELAY))
 
+const countryArray = [];
 function countryList(data) {
      data.forEach(e => {
         let li = document.createElement('li');
-        listEl.append(li)
+        // listEl.append(li);
+        countryArray.push(li);
      });
 
 }
+// console.log(countryArray)
+// setInterval(console.log(countryArray), 1000)
