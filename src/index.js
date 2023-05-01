@@ -4,10 +4,7 @@ import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 const API_URL = `https://restcountries.com/v3.1/name/`;
-const searchParams = new URLSearchParams({
-  _limit: 10,
-  _sort: 'name',
-});
+
 const filteredFields = '?fields=name,capital,population,flags,languages';
 const searchEl = document.getElementById('search-box');
 const listEl = document.querySelector('.country-list');
@@ -18,10 +15,11 @@ searchEl.addEventListener(
   debounce(event => {
     const inputEv = event.target.value.trim();
     console.log(inputEv);
-    return fetch(`${API_URL}${inputEv}${filteredFields}&${searchParams}`)
+    return fetch(`${API_URL}${inputEv}${filteredFields}`)
       .then(response => {
         if (!response.ok && inputEv) {
           listEl.innerHTML = '';
+          infoEl.innerHTML = '';
           Notiflix.Notify.failure('Oops, there is no country with that name');
           throw new Error(response.status);
         }
@@ -30,15 +28,28 @@ searchEl.addEventListener(
       .then(data => {
         if (data.length > 10) {
           listEl.innerHTML = '';
+          infoEl.innerHTML = '';
           Notiflix.Notify.info(
             'Too many matches found. Please enter a more specific name.'
           );
           return;
+        } else if (data.length === 1) {
+            infoEl.innerHTML = '';
+            countryInfo(data);
+            listEl.innerHTML = '';
+            infoEl.innerHTML = htmlStringInfo;
+            return;
+        } else if (!inputEv) {
+          listEl.innerHTML = '';
+          infoEl.innerHTML = '';
+          return;
         }
         htmlStringList = '';
-        console.log(data.length, data[0].name.official, data[0].flags.svg);
+        console.log(data, data.length, data[0].name.official, data[0].flags.svg);
         countryList(data);
-        listEl.innerHTML = `${htmlStringList}`;
+        infoEl.innerHTML = '';
+        listEl.innerHTML = htmlStringList;
+        
       })
       .catch(error => console.log(error));
   }, DEBOUNCE_DELAY)
@@ -48,8 +59,20 @@ let htmlStringList = '';
 function countryList(data) {
   data.forEach(e => {
     htmlStringList += `<li class="list-item">
-        <img src="${e.flags.svg}" class="list-flag" height = "20"/>
-        <p class="list-text">${e.name.official}</p>
+        <img src="${e.flags.svg}" alt="${e.flags.alt}" class="list-flag" width = "30"/>
+        <p class="list-text">${e.name.common}</p>
     </li>`;
   });
+}
+let htmlStringInfo = '';
+function countryInfo(data) {
+    const capital = data[0].capital[0]
+    const population = data[0].population
+    const languages = data.map((data) => `${Object.values(data.languages)}`);
+    
+    htmlStringInfo = `<img src="${data[0].flags.svg}" class="info-flag" height = "40"/>
+    <h1>${data[0].name.common}</h1>
+    <p><b>Capital: </b>${capital}</p>
+<p><b>Population: </b>${population}</p>
+<p><b>Languages: </b>${languages}</p>`
 }

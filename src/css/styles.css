@@ -41,7 +41,7 @@ body {
   display: flex;
   list-style-type: none;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   transition: opacity 250ms ease-in;
   opacity: 1;
 }
