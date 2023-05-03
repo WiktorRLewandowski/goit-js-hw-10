@@ -69,6 +69,10 @@ function countryInfo(data) {
 }
 
 listEl.addEventListener('click', (event) => {
+  if(event.target.nodeName !== "P") {
+    return
+  }
+
 const fullName = event.target.textContent;
 const fullTextParam = 'fullText=true';
 setTimeout(() => {searchEl.value = fullName}, 400);//to hide fetching time
@@ -81,10 +85,5 @@ fetchCountries(`${API_URL}${fullName}${filteredFields}&${fullTextParam}`)
   infoEl.innerHTML = htmlStringInfo;
     return;
 })
-.catch(error => {
-  listEl.innerHTML = '';
-  infoEl.innerHTML = '';
-  Notiflix.Notify.failure('Oops, there is no country with that name')
-})
-
+.catch(error => console.log(error))
 })
