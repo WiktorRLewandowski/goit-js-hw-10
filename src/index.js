@@ -67,3 +67,24 @@ function countryInfo(data) {
 <p><b>Population: </b>${population}</p>
 <p><b>Languages: </b>${languages}</p>`
 }
+
+listEl.addEventListener('click', (event) => {
+const fullName = event.target.textContent;
+const fullTextParam = 'fullText=true';
+setTimeout(() => {searchEl.value = fullName}, 400);//to hide fetching time
+
+fetchCountries(`${API_URL}${fullName}${filteredFields}&${fullTextParam}`)
+.then(data => {
+  infoEl.innerHTML = '';
+  countryInfo(data);
+  listEl.innerHTML = '';
+  infoEl.innerHTML = htmlStringInfo;
+    return;
+})
+.catch(error => {
+  listEl.innerHTML = '';
+  infoEl.innerHTML = '';
+  Notiflix.Notify.failure('Oops, there is no country with that name')
+})
+
+})

@@ -21,6 +21,10 @@ body {
   margin-bottom: 16px;
 }
 
+p {
+ opacity: 0.8;  
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -36,6 +40,11 @@ body {
   list-style-type: none;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background-color: blanchedalmond;
 }
 
 .list-flag {
