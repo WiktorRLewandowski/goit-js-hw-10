@@ -1,6 +1,7 @@
 import './css/styles.css';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
+import { fetchCountries } from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
 const API_URL = `https://restcountries.com/v3.1/name/`;
@@ -14,17 +15,7 @@ searchEl.addEventListener(
   'input',
   debounce(event => {
     const inputEv = event.target.value.trim();
-    console.log(inputEv);
-    return fetch(`${API_URL}${inputEv}${filteredFields}`)
-      .then(response => {
-        if (!response.ok && inputEv) {
-          listEl.innerHTML = '';
-          infoEl.innerHTML = '';
-          Notiflix.Notify.failure('Oops, there is no country with that name');
-          throw new Error(response.status);
-        }
-        return response.json();
-      })
+    fetchCountries(`${API_URL}${inputEv}${filteredFields}`)
       .then(data => {
         if (data.length > 10) {
           listEl.innerHTML = '';
@@ -39,19 +30,18 @@ searchEl.addEventListener(
             listEl.innerHTML = '';
             infoEl.innerHTML = htmlStringInfo;
             return;
-        } else if (!inputEv) {
-          listEl.innerHTML = '';
-          infoEl.innerHTML = '';
-          return;
         }
         htmlStringList = '';
-        console.log(data, data.length, data[0].name.official, data[0].flags.svg);
         countryList(data);
         infoEl.innerHTML = '';
         listEl.innerHTML = htmlStringList;
         
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        listEl.innerHTML = '';
+        infoEl.innerHTML = '';
+        Notiflix.Notify.failure('Oops, there is no country with that name')
+      });
   }, DEBOUNCE_DELAY)
 );
 
@@ -64,13 +54,14 @@ function countryList(data) {
     </li>`;
   });
 }
+
 let htmlStringInfo = '';
 function countryInfo(data) {
     const capital = data[0].capital[0]
     const population = data[0].population
     const languages = data.map((data) => `${Object.values(data.languages)}`);
     
-    htmlStringInfo = `<img src="${data[0].flags.svg}" class="info-flag" height = "40"/>
+    htmlStringInfo = `<img src="${data[0].flags.svg}" alt="${data[0].flags.alt}" class="info-flag" height = "40"/>
     <h1>${data[0].name.common}</h1>
     <p><b>Capital: </b>${capital}</p>
 <p><b>Population: </b>${population}</p>
