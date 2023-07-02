@@ -1,1 +1,1 @@
-## https://wiktorrlewandowski.github.io/goit-js-hw-11/
+## https://wiktorrlewandowski.github.io/goit-js-hw-10/
